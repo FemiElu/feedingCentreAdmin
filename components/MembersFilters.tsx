@@ -129,34 +129,42 @@ export function MembersFilters({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {/* Search */}
         <div className="lg:col-span-2">
-          <Input
-            label="Search"
-            placeholder="Search by name, phone, or email..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            icon={
-              <svg
-                className="w-4 h-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            }
-          />
+          <div className="relative">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Search
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search by name, phone, or email..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="input pl-10"
+              />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Center */}
         <Select
           label="Center"
           value={filters.center_id || ""}
-          onChange={(value) => handleFilterChange("center_id", value)}
+          onChange={(e) => handleFilterChange("center_id", e.target.value)}
           options={[
             { value: "", label: "All Centers" },
             ...centers.map((center) => ({
@@ -170,7 +178,7 @@ export function MembersFilters({
         <Select
           label="Service Unit"
           value={filters.service_unit || ""}
-          onChange={(value) => handleFilterChange("service_unit", value)}
+          onChange={(e) => handleFilterChange("service_unit", e.target.value)}
           options={[
             { value: "", label: "All Service Units" },
             ...serviceUnits.map((unit) => ({
@@ -184,7 +192,7 @@ export function MembersFilters({
         <Select
           label="Gender"
           value={filters.gender || ""}
-          onChange={(value) => handleFilterChange("gender", value)}
+          onChange={(e) => handleFilterChange("gender", e.target.value)}
           options={[{ value: "", label: "All Genders" }, ...genderOptions]}
         />
 
@@ -192,7 +200,7 @@ export function MembersFilters({
         <Select
           label="Marital Status"
           value={filters.marital_status || ""}
-          onChange={(value) => handleFilterChange("marital_status", value)}
+          onChange={(e) => handleFilterChange("marital_status", e.target.value)}
           options={[
             { value: "", label: "All Status" },
             ...maritalStatusOptions,
@@ -203,7 +211,7 @@ export function MembersFilters({
         <Select
           label="Sort By"
           value={filters.sort_by || "created_at"}
-          onChange={(value) => handleFilterChange("sort_by", value as any)}
+          onChange={(e) => handleFilterChange("sort_by", e.target.value as any)}
           options={sortOptions}
         />
 
@@ -211,7 +219,9 @@ export function MembersFilters({
         <Select
           label="Sort Order"
           value={filters.sort_order || "desc"}
-          onChange={(value) => handleFilterChange("sort_order", value as any)}
+          onChange={(e) =>
+            handleFilterChange("sort_order", e.target.value as any)
+          }
           options={sortOrderOptions}
         />
       </div>

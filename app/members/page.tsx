@@ -36,7 +36,7 @@ export default function MembersPage() {
         case "export":
           toast({
             title: "Export Started",
-            description: `Exporting ${selectedIds.length} members to CSV...`,
+            message: `Exporting ${selectedIds.length} members to CSV...`,
             type: "success",
           });
           // TODO: Implement CSV export
@@ -44,7 +44,7 @@ export default function MembersPage() {
         case "message":
           toast({
             title: "Message Sent",
-            description: `Sending message to ${selectedIds.length} members...`,
+            message: `Sending message to ${selectedIds.length} members...`,
             type: "success",
           });
           // TODO: Implement bulk messaging
@@ -52,7 +52,7 @@ export default function MembersPage() {
         default:
           toast({
             title: "Action Not Implemented",
-            description: "This action is not yet implemented.",
+            message: "This action is not yet implemented.",
             type: "warning",
           });
       }

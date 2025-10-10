@@ -210,7 +210,7 @@ export function useNewestMembers() {
         return (
           data?.map((member) => ({
             ...member,
-            center_name: member.centers?.name || "Unknown Center",
+            center_name: member.centers?.[0]?.name || "Unknown Center",
           })) || []
         );
       } catch (error) {

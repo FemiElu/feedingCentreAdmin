@@ -3,7 +3,7 @@ import { clsx } from "clsx";
 
 export interface TableColumn<T = any> {
   key: string;
-  label: string;
+  label: React.ReactNode;
   render?: (value: any, row: T) => React.ReactNode;
   sortable?: boolean;
   className?: string;
