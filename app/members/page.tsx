@@ -87,17 +87,19 @@ export default function MembersPage() {
   return (
     <AuthGuard>
       <Layout>
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Page Header */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Members</h1>
-              <p className="text-gray-600">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+                Members
+              </h1>
+              <p className="text-sm sm:text-base text-gray-600 mt-1">
                 Manage and view all church members
               </p>
             </div>
-            <div className="flex items-center space-x-3">
-              <Button variant="outline">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+              <Button variant="outline" className="w-full sm:w-auto">
                 <svg
                   className="w-4 h-4 mr-2"
                   fill="none"
@@ -111,9 +113,10 @@ export default function MembersPage() {
                     d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                   />
                 </svg>
-                Export All
+                <span className="hidden sm:inline">Export All</span>
+                <span className="sm:hidden">Export</span>
               </Button>
-              <Button variant="primary">
+              <Button variant="primary" className="w-full sm:w-auto">
                 <svg
                   className="w-4 h-4 mr-2"
                   fill="none"
@@ -154,24 +157,28 @@ export default function MembersPage() {
           {/* Stats Summary */}
           {data && (
             <div className="bg-gray-50 rounded-lg p-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">
+                  <div className="text-xl sm:text-2xl font-bold text-gray-900">
                     {data.total.toLocaleString()}
                   </div>
-                  <div className="text-sm text-gray-600">Total Members</div>
+                  <div className="text-xs sm:text-sm text-gray-600">
+                    Total Members
+                  </div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">
+                  <div className="text-xl sm:text-2xl font-bold text-gray-900">
                     {data.members.length}
                   </div>
-                  <div className="text-sm text-gray-600">Showing</div>
+                  <div className="text-xs sm:text-sm text-gray-600">
+                    Showing
+                  </div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-gray-900">
+                  <div className="text-xl sm:text-2xl font-bold text-gray-900">
                     {data.totalPages}
                   </div>
-                  <div className="text-sm text-gray-600">Pages</div>
+                  <div className="text-xs sm:text-sm text-gray-600">Pages</div>
                 </div>
               </div>
             </div>

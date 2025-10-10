@@ -124,17 +124,19 @@ export default function DashboardPage() {
   return (
     <AuthGuard>
       <Layout>
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Page Header */}
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-600">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+              Dashboard
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">
               Welcome to the Feeding Centre Church Admin Dashboard
             </p>
           </div>
 
           {/* Top Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             <DashboardCard
               title="Total Members"
               value={stats?.totalMembers || 0}
@@ -168,12 +170,12 @@ export default function DashboardPage() {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">
               Quick Actions
             </h3>
-            <div className="flex flex-wrap gap-3">
-              <Button variant="primary">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+              <Button variant="primary" className="w-full sm:w-auto">
                 <svg
                   className="w-4 h-4 mr-2"
                   fill="none"
@@ -189,7 +191,7 @@ export default function DashboardPage() {
                 </svg>
                 Import CSV
               </Button>
-              <Button variant="secondary">
+              <Button variant="secondary" className="w-full sm:w-auto">
                 <svg
                   className="w-4 h-4 mr-2"
                   fill="none"
@@ -205,7 +207,7 @@ export default function DashboardPage() {
                 </svg>
                 Send Broadcast
               </Button>
-              <Button variant="outline">
+              <Button variant="outline" className="w-full sm:w-auto">
                 <svg
                   className="w-4 h-4 mr-2"
                   fill="none"
@@ -225,7 +227,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Charts and Tables Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             {/* Birthday Chart */}
             <SmallBarChart
               data={birthdayData || []}
@@ -241,12 +243,12 @@ export default function DashboardPage() {
 
           {/* Newest Members Table */}
           <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">
+            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+              <h3 className="text-base sm:text-lg font-medium text-gray-900">
                 Newest Members
               </h3>
             </div>
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <Table
                 columns={membersTableColumns}
                 data={newestMembers || []}

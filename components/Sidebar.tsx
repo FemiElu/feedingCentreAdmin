@@ -11,6 +11,11 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
 }
 
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
 const navigation: NavItem[] = [
   { name: "Dashboard", href: "/", icon: DashboardIcon },
   { name: "Members", href: "/members", icon: UsersIcon },
@@ -22,73 +27,111 @@ const navigation: NavItem[] = [
   { name: "Settings", href: "/settings", icon: CogIcon },
 ];
 
-export function Sidebar() {
+export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
 
   return (
-    <div
-      className={clsx(
-        "bg-white shadow-sm border-r border-gray-200 transition-all duration-300",
-        collapsed ? "w-16" : "w-64"
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 lg:hidden"
+          onClick={onClose}
+        />
       )}
-    >
-      <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          {!collapsed && (
-            <h2 className="text-lg font-semibold text-gray-900">Menu</h2>
-          )}
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="p-1 rounded-md hover:bg-gray-100 transition-colors"
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            <svg
-              className={clsx(
-                "h-5 w-5 text-gray-500 transition-transform",
-                collapsed && "rotate-180"
-              )}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-              />
-            </svg>
-          </button>
-        </div>
 
-        <nav className="flex-1 p-4 space-y-2">
-          {navigation.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={clsx(
-                  "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                  isActive
-                    ? "bg-primary-100 text-primary-700"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                )}
+      {/* Sidebar */}
+      <div
+        className={clsx(
+          "fixed lg:static inset-y-0 left-0 z-50 bg-white shadow-sm border-r border-gray-200 transition-all duration-300",
+          "lg:translate-x-0",
+          isOpen ? "translate-x-0" : "-translate-x-full",
+          collapsed ? "w-16" : "w-64"
+        )}
+      >
+        <div className="flex flex-col h-full">
+          <div className="flex items-center justify-between p-4 border-b border-gray-200">
+            {!collapsed && (
+              <h2 className="text-lg font-semibold text-gray-900">Menu</h2>
+            )}
+            <div className="flex items-center space-x-2">
+              {/* Mobile close button */}
+              <button
+                onClick={onClose}
+                className="lg:hidden p-1 rounded-md hover:bg-gray-100 transition-colors"
+                aria-label="Close sidebar"
               >
-                <item.icon
+                <svg
+                  className="h-5 w-5 text-gray-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+
+              {/* Desktop collapse button */}
+              <button
+                onClick={() => setCollapsed(!collapsed)}
+                className="hidden lg:block p-1 rounded-md hover:bg-gray-100 transition-colors"
+                aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              >
+                <svg
                   className={clsx(
-                    "h-5 w-5 flex-shrink-0",
-                    isActive ? "text-primary-500" : "text-gray-400"
+                    "h-5 w-5 text-gray-500 transition-transform",
+                    collapsed && "rotate-180"
                   )}
-                />
-                {!collapsed && <span className="ml-3">{item.name}</span>}
-              </Link>
-            );
-          })}
-        </nav>
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <nav className="flex-1 p-4 space-y-2">
+            {navigation.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={onClose} // Close mobile sidebar when navigating
+                  className={clsx(
+                    "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                    isActive
+                      ? "bg-primary-100 text-primary-700"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                  )}
+                >
+                  <item.icon
+                    className={clsx(
+                      "h-5 w-5 flex-shrink-0",
+                      isActive ? "text-primary-500" : "text-gray-400"
+                    )}
+                  />
+                  {!collapsed && <span className="ml-3">{item.name}</span>}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
