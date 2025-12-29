@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabaseClient";
 
 // Types for members data
@@ -15,6 +15,8 @@ export interface Member {
   dob: string;
   created_at: string;
 }
+
+export type CreateMemberInput = Omit<Member, "id" | "center_name" | "created_at">;
 
 export interface MembersFilters {
   search?: string;
@@ -147,6 +149,51 @@ export function useMembers(
   });
 }
 
+// Create member mutation
+export function useCreateMember() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (member: CreateMemberInput): Promise<Member> => {
+      if (!supabase) {
+        // Return a mock created member
+        const newMember: Member = {
+          ...member,
+          id: Math.random().toString(36).substr(2, 9),
+          center_name: "Mock Center", // In reality, we'd fetch this or the API would return it
+          created_at: new Date().toISOString(),
+        };
+        return newMember;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from("members")
+          .insert([member])
+          .select(`
+            *,
+            centers(name)
+          `)
+          .single();
+
+        if (error) throw error;
+
+        return {
+          ...data,
+          center_name: data.centers?.name || "Unknown Center",
+        };
+      } catch (error) {
+        console.error("Error creating member:", error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      // Invalidate members queries to refresh the list
+      queryClient.invalidateQueries({ queryKey: ["members"] });
+    },
+  });
+}
+
 // Centers query for filter dropdown
 export function useCenters() {
   return useQuery({
@@ -155,11 +202,11 @@ export function useCenters() {
       if (!supabase) {
         // Return mock data when Supabase is not configured
         return [
-          { id: "1", name: "Downtown Center" },
-          { id: "2", name: "Westside Center" },
-          { id: "3", name: "Eastside Center" },
-          { id: "4", name: "Northside Center" },
-          { id: "5", name: "Southside Center" },
+          { id: "1", name: "Ile-Ife Center" },
+          { id: "2", name: "Lagos Center" },
+          { id: "3", name: "Ibadan Center" },
+          { id: "4", name: "Akure Center" },
+          { id: "5", name: "Osogbo Center" },
         ];
       }
 

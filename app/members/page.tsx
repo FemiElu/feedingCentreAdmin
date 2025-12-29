@@ -11,10 +11,13 @@ import {
   MembersFilters as MembersFiltersType,
 } from "@/lib/queries/membersQueries";
 import { useToast } from "@/components/Toast";
+import { Modal } from "@/components/Modal";
+import { AddMemberForm } from "@/components/AddMemberForm";
 
 export default function MembersPage() {
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<MembersFiltersType>({});
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { toast } = useToast();
 
   const pageSize = 10;
@@ -116,7 +119,11 @@ export default function MembersPage() {
                 <span className="hidden sm:inline">Export All</span>
                 <span className="sm:hidden">Export</span>
               </Button>
-              <Button variant="primary" className="w-full sm:w-auto">
+              <Button
+                variant="primary"
+                className="w-full sm:w-auto"
+                onClick={() => setIsAddModalOpen(true)}
+              >
                 <svg
                   className="w-4 h-4 mr-2"
                   fill="none"
@@ -183,6 +190,19 @@ export default function MembersPage() {
               </div>
             </div>
           )}
+
+          {/* Add Member Modal */}
+          <Modal
+            isOpen={isAddModalOpen}
+            onClose={() => setIsAddModalOpen(false)}
+            title="Add New Member"
+            size="lg"
+          >
+            <AddMemberForm
+              onSuccess={() => setIsAddModalOpen(false)}
+              onCancel={() => setIsAddModalOpen(false)}
+            />
+          </Modal>
         </div>
       </Layout>
     </AuthGuard>

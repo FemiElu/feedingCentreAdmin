@@ -8,43 +8,41 @@ export interface InputProps
   helperText?: string;
 }
 
-export function Input({
-  label,
-  error,
-  helperText,
-  className,
-  id,
-  ...props
-}: InputProps) {
-  const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ label, error, helperText, className, id, ...props }, ref) => {
+    const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
-  return (
-    <div className="w-full">
-      {label && (
-        <label
-          htmlFor={inputId}
-          className="block text-sm font-medium text-gray-700 mb-1"
-        >
-          {label}
-        </label>
-      )}
-      <input
-        id={inputId}
-        className={clsx(
-          "input",
-          error && "border-red-500 focus-visible:ring-red-500",
-          className
+    return (
+      <div className="w-full">
+        {label && (
+          <label
+            htmlFor={inputId}
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            {label}
+          </label>
         )}
-        {...props}
-      />
-      {error && (
-        <p className="mt-1 text-sm text-red-600" role="alert">
-          {error}
-        </p>
-      )}
-      {helperText && !error && (
-        <p className="mt-1 text-sm text-gray-500">{helperText}</p>
-      )}
-    </div>
-  );
-}
+        <input
+          id={inputId}
+          className={clsx(
+            "input",
+            error && "border-red-500 focus-visible:ring-red-500",
+            className
+          )}
+          {...props}
+          ref={ref}
+        />
+        {error && (
+          <p className="mt-1 text-sm text-red-600" role="alert">
+            {error}
+          </p>
+        )}
+        {helperText && !error && (
+          <p className="mt-1 text-sm text-gray-500">{helperText}</p>
+        )}
+      </div>
+    );
+  }
+);
+
+Input.displayName = "Input";

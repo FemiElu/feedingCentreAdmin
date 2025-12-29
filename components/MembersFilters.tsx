@@ -8,6 +8,11 @@ import { Button } from "@/components/Button";
 import { MembersFilters as MembersFiltersType } from "@/lib/queries/membersQueries";
 import { useCenters } from "@/lib/queries/membersQueries";
 import { clsx } from "clsx";
+import {
+  SERVICE_UNITS,
+  GENDER_OPTIONS,
+  MARITAL_STATUS_OPTIONS,
+} from "@/lib/constants";
 
 export interface MembersFiltersProps {
   onFiltersChange: (filters: MembersFiltersType) => void;
@@ -83,26 +88,9 @@ export function MembersFilters({
       value && value !== "" && value !== "created_at" && value !== "desc"
   );
 
-  const serviceUnits = [
-    "Ushering",
-    "Choir",
-    "Media",
-    "Children",
-    "Security",
-    "Hospitality",
-  ];
-
-  const genderOptions = [
-    { value: "Male", label: "Male" },
-    { value: "Female", label: "Female" },
-  ];
-
-  const maritalStatusOptions = [
-    { value: "Single", label: "Single" },
-    { value: "Married", label: "Married" },
-    { value: "Divorced", label: "Divorced" },
-    { value: "Widowed", label: "Widowed" },
-  ];
+  const serviceUnits = SERVICE_UNITS;
+  const genderOptions = GENDER_OPTIONS;
+  const maritalStatusOptions = MARITAL_STATUS_OPTIONS;
 
   const sortOptions = [
     { value: "name", label: "Name" },
