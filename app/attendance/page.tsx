@@ -17,6 +17,7 @@ export default function AttendancePage() {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [selectedCenter, setSelectedCenter] = useState("");
     const [dateRange, setDateRange] = useState({ start: "", end: "" });
+    const [viewAll, setViewAll] = useState(false);
 
     const { data: records = [], isLoading } = useAttendance({
         center_id: selectedCenter || undefined,
@@ -187,17 +188,36 @@ export default function AttendancePage() {
 
                     {/* Table */}
                     <Card className="overflow-hidden">
-                        <div className="p-4 border-b border-gray-200">
-                            <h3 className="text-lg font-bold text-gray-900">Recent Records</h3>
+                        <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+                            <h3 className="text-lg font-bold text-gray-900">
+                                {viewAll ? "All Attendance Records" : "Recent Records"}
+                            </h3>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setViewAll(!viewAll)}
+                            >
+                                {viewAll ? "Show Less" : "View All"}
+                            </Button>
                         </div>
                         <div className="overflow-x-auto">
                             <Table
                                 columns={columns}
-                                data={records}
+                                data={viewAll ? records : records.slice(0, 5)}
                                 loading={isLoading}
                                 emptyMessage="No attendance records found."
                             />
                         </div>
+                        {!viewAll && records.length > 5 && (
+                            <div className="p-4 border-t border-gray-200 text-center">
+                                <button
+                                    onClick={() => setViewAll(true)}
+                                    className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                                >
+                                    View all {records.length} records
+                                </button>
+                            </div>
+                        )}
                     </Card>
 
                     {/* Modal */}
