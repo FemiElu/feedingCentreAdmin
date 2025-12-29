@@ -88,7 +88,7 @@ export function MemberGrowthChart({ data, loading }: GrowthChartProps) {
 }
 
 interface GenderChartProps {
-    data: { male: number; female: number; other: number };
+    data: { male: number; female: number };
     loading?: boolean;
 }
 
@@ -104,7 +104,6 @@ export function GenderDistributionChart({ data, loading }: GenderChartProps) {
     const chartData = [
         { name: "Male", value: data.male, color: "#4f46e5" },
         { name: "Female", value: data.female, color: "#ec4899" },
-        { name: "Other", value: data.other, color: "#94a3b8" },
     ].filter(d => d.value > 0);
 
     return (
