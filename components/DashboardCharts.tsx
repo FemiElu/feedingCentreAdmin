@@ -38,7 +38,7 @@ export function MemberGrowthChart({ data, loading }: GrowthChartProps) {
         <Card className="p-6">
             <div className="flex items-center justify-between mb-6">
                 <div>
-                    <h3 className="text-lg font-bold text-gray-900">Member Growth</h3>
+                    <h3 className="text-lg font-bold text-gray-900">Member Growth Trend</h3>
                     <p className="text-sm text-gray-500">Cumulative member count over time</p>
                 </div>
             </div>
