@@ -1,122 +1,89 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { AuthGuard } from "@/components/AuthGuard";
 import { Layout } from "@/components/Layout";
 import { DashboardCard } from "@/components/DashboardCard";
 import { ActivityFeed } from "@/components/ActivityFeed";
-import { SmallBarChart } from "@/components/SmallBarChart";
+import { MemberGrowthChart, GenderDistributionChart } from "@/components/DashboardCharts";
 import { Button } from "@/components/Button";
 import { Table } from "@/components/Table";
+import { Select } from "@/components/Select";
 import {
   useDashboardStats,
   useActivityFeed,
   useNewestMembers,
-  useBirthdayChart,
+  useGrowthChart,
+  useGenderStats,
 } from "@/lib/queries/dashboardQueries";
-
-// Icons for dashboard cards
-const MembersIcon = () => (
-  <svg
-    className="w-6 h-6"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
-    />
-  </svg>
-);
-
-const NewMembersIcon = () => (
-  <svg
-    className="w-6 h-6"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-    />
-  </svg>
-);
-
-const BirthdayIcon = () => (
-  <svg
-    className="w-6 h-6"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0A2.704 2.704 0 003 15.546V12a9 9 0 0118 0v3.546z"
-    />
-  </svg>
-);
-
-const CentersIcon = () => (
-  <svg
-    className="w-6 h-6"
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-    />
-  </svg>
-);
+import { useCenters } from "@/lib/queries/membersQueries";
+import {
+  Users,
+  UserPlus,
+  Cake,
+  MapPin,
+  TrendingUp,
+  Filter,
+  Download,
+  Share2
+} from "lucide-react";
 
 export default function DashboardPage() {
+  const [selectedCenter, setSelectedCenter] = useState<string>("");
+
   const { data: stats, isLoading: statsLoading } = useDashboardStats();
   const { data: activities, isLoading: activitiesLoading } = useActivityFeed();
   const { data: newestMembers, isLoading: membersLoading } = useNewestMembers();
-  const { data: birthdayData, isLoading: birthdayLoading } = useBirthdayChart();
+  const { data: growthData, isLoading: growthLoading } = useGrowthChart(selectedCenter);
+  const { data: genderData, isLoading: genderLoading } = useGenderStats(selectedCenter);
+  const { data: centers = [] } = useCenters();
 
   const membersTableColumns = [
     {
       key: "name",
-      label: "Name",
+      label: "Member",
       render: (value: string, row: any) => (
-        <div>
-          <div className="font-medium text-gray-900">{value}</div>
-          <div className="text-sm text-gray-500">{row.email}</div>
+        <div className="flex items-center">
+          <div className="h-8 w-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-xs mr-3">
+            {value.charAt(0)}
+          </div>
+          <div>
+            <div className="font-medium text-gray-900">{value}</div>
+            <div className="text-xs text-gray-500">{row.email}</div>
+          </div>
         </div>
       ),
     },
     {
       key: "phone",
-      label: "Phone",
+      label: "Contact",
+      render: (val: string) => <span className="text-sm text-gray-600">{val}</span>
     },
     {
       key: "center_name",
       label: "Center",
+      render: (val: string) => (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+          {val}
+        </span>
+      )
     },
     {
       key: "created_at",
-      label: "Joined",
-      render: (value: string) => new Date(value).toLocaleDateString(),
+      label: "Joined Date",
+      render: (value: string) => (
+        <span className="text-sm text-gray-500">
+          {new Date(value).toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' })}
+        </span>
+      ),
     },
     {
       key: "actions",
-      label: "Actions",
+      label: "",
       render: () => (
-        <Button variant="outline" size="sm">
-          View
-        </Button>
+        <button className="text-primary-600 hover:text-primary-900 font-medium text-sm transition-colors">
+          View Profile
+        </button>
       ),
     },
   ];
@@ -124,136 +91,112 @@ export default function DashboardPage() {
   return (
     <AuthGuard>
       <Layout>
-        <div className="space-y-4 sm:space-y-6">
-          {/* Page Header */}
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-              Dashboard
-            </h1>
-            <p className="text-sm sm:text-base text-gray-600 mt-1">
-              Welcome to the Feeding Centre Church Admin Dashboard
-            </p>
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Enhanced Page Header */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+                Insights Dashboard
+              </h1>
+              <p className="text-gray-500 mt-1 flex items-center">
+                <TrendingUp className="w-4 h-4 mr-2 text-green-500" />
+                Real-time metrics and member analytics
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="min-w-[200px]">
+                <Select
+                  value={selectedCenter}
+                  onChange={(e) => setSelectedCenter(e.target.value)}
+                  options={[
+                    { value: "", label: "All Centers" },
+                    ...centers.map(c => ({ value: c.id, label: c.name }))
+                  ]}
+                  placeholder="Filter by Center"
+                />
+              </div>
+              <Button variant="outline" size="sm" className="hidden sm:flex">
+                <Download className="w-4 h-4 mr-2" /> Export
+              </Button>
+              <Button variant="primary" size="sm">
+                <Share2 className="w-4 h-4 mr-2" /> Share
+              </Button>
+            </div>
           </div>
 
-          {/* Top Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {/* Top Cards with improved styling */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <DashboardCard
-              title="Total Members"
+              title="Total Congregation"
               value={stats?.totalMembers || 0}
-              subtitle="All registered members"
-              icon={<MembersIcon />}
-              trend={{ value: 12, isPositive: true }}
+              subtitle="Active members across all regions"
+              icon={<Users className="w-5 h-5" />}
+              trend={{ value: 12.4, isPositive: true }}
               loading={statsLoading}
+              className="border-none shadow-lg shadow-gray-200/50"
             />
             <DashboardCard
-              title="New This Month"
+              title="New Converts"
               value={stats?.newThisMonth || 0}
-              subtitle="Members joined this month"
-              icon={<NewMembersIcon />}
-              trend={{ value: 8, isPositive: true }}
+              subtitle="Registered this current month"
+              icon={<UserPlus className="w-5 h-5" />}
+              trend={{ value: 8.2, isPositive: true }}
               loading={statsLoading}
+              className="border-none shadow-lg shadow-gray-200/50"
             />
             <DashboardCard
-              title="Upcoming Birthdays"
+              title="Celebrants"
               value={stats?.upcomingBirthdays || 0}
-              subtitle="Next 7 days"
-              icon={<BirthdayIcon />}
+              subtitle="Birthdays in the next 7 days"
+              icon={<Cake className="w-5 h-5" />}
               loading={statsLoading}
+              className="border-none shadow-lg shadow-gray-200/50"
             />
             <DashboardCard
-              title="Centers"
+              title="Active Centers"
               value={stats?.centersCount || 0}
-              subtitle="Active feeding centers"
-              icon={<CentersIcon />}
+              subtitle="Established feeding centers"
+              icon={<MapPin className="w-5 h-5" />}
               loading={statsLoading}
+              className="border-none shadow-lg shadow-gray-200/50"
             />
           </div>
 
-          {/* Quick Actions */}
-          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">
-              Quick Actions
-            </h3>
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-              <Button variant="primary" className="w-full sm:w-auto">
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                  />
-                </svg>
-                Import CSV
-              </Button>
-              <Button variant="secondary" className="w-full sm:w-auto">
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  />
-                </svg>
-                Send Broadcast
-              </Button>
-              <Button variant="outline" className="w-full sm:w-auto">
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-                  />
-                </svg>
-                Add Member
-              </Button>
+          {/* New Charts Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <MemberGrowthChart data={growthData || []} loading={growthLoading} />
+            </div>
+            <div className="lg:col-span-1">
+              <GenderDistributionChart data={genderData || { male: 0, female: 0, other: 0 }} loading={genderLoading} />
             </div>
           </div>
 
-          {/* Charts and Tables Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-            {/* Birthday Chart */}
-            <SmallBarChart
-              data={birthdayData || []}
-              loading={birthdayLoading}
-            />
-
-            {/* Recent Activity */}
-            <ActivityFeed
-              activities={activities || []}
-              loading={activitiesLoading}
-            />
-          </div>
-
-          {/* Newest Members Table */}
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
-              <h3 className="text-base sm:text-lg font-medium text-gray-900">
-                Newest Members
-              </h3>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Newest Members Table - Now wider */}
+            <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+                <h3 className="text-lg font-bold text-gray-900">
+                  Recently Onboarded
+                </h3>
+                <Button variant="outline" size="sm">View All</Button>
+              </div>
+              <div className="p-0">
+                <Table
+                  columns={membersTableColumns}
+                  data={newestMembers || []}
+                  loading={membersLoading}
+                  emptyMessage="No recent members found"
+                />
+              </div>
             </div>
-            <div className="p-4 sm:p-6">
-              <Table
-                columns={membersTableColumns}
-                data={newestMembers || []}
-                loading={membersLoading}
-                emptyMessage="No members found"
+
+            {/* Recent Activity - Now in its own column */}
+            <div className="lg:col-span-1">
+              <ActivityFeed
+                activities={activities || []}
+                loading={activitiesLoading}
               />
             </div>
           </div>

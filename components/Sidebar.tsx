@@ -19,8 +19,8 @@ interface SidebarProps {
 const navigation: NavItem[] = [
   { name: "Dashboard", href: "/", icon: DashboardIcon },
   { name: "Members", href: "/members", icon: UsersIcon },
-  { name: "Import", href: "/import", icon: UploadIcon },
   { name: "Messages", href: "/messages", icon: ChatIcon },
+  { name: "Import", href: "/import", icon: UploadIcon },
   { name: "Scheduled", href: "/scheduled", icon: CalendarIcon },
   { name: "Notifications", href: "/notifications", icon: BellIcon },
   { name: "Admins", href: "/admins", icon: ShieldIcon },

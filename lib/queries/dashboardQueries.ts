@@ -32,6 +32,17 @@ export interface BirthdayData {
   count: number;
 }
 
+export interface GenderStats {
+  male: number;
+  female: number;
+  other: number;
+}
+
+export interface GrowthData {
+  date: string;
+  count: number;
+}
+
 // Dashboard statistics query
 export function useDashboardStats() {
   return useQuery({
@@ -287,5 +298,83 @@ export function useBirthdayChart() {
     },
     staleTime: 10 * 60 * 1000, // 10 minutes
     cacheTime: 30 * 60 * 1000, // 30 minutes
+  });
+}
+// Gender statistics query
+export function useGenderStats(centerId?: string) {
+  return useQuery({
+    queryKey: ["gender-stats", centerId],
+    queryFn: async (): Promise<GenderStats> => {
+      if (!supabase) {
+        return { male: 650, female: 580, other: 4 };
+      }
+
+      try {
+        let query = supabase.from("members").select("gender");
+        if (centerId) query = query.eq("center_id", centerId);
+
+        const { data, error } = await query;
+        if (error) throw error;
+
+        const stats = { male: 0, female: 0, other: 0 };
+        data?.forEach((m) => {
+          const g = m.gender?.toLowerCase();
+          if (g === "male") stats.male++;
+          else if (g === "female") stats.female++;
+          else stats.other++;
+        });
+        return stats;
+      } catch (error) {
+        console.error("Error fetching gender stats:", error);
+        throw error;
+      }
+    },
+  });
+}
+
+// Growth chart query
+export function useGrowthChart(centerId?: string) {
+  return useQuery({
+    queryKey: ["growth-chart", centerId],
+    queryFn: async (): Promise<GrowthData[]> => {
+      if (!supabase) {
+        return [
+          { date: "Jan", count: 800 },
+          { date: "Feb", count: 850 },
+          { date: "Mar", count: 920 },
+          { date: "Apr", count: 1050 },
+          { date: "May", count: 1120 },
+          { date: "Jun", count: 1234 },
+        ];
+      }
+
+      try {
+        let query = supabase.from("members").select("created_at").order("created_at");
+        if (centerId) query = query.eq("center_id", centerId);
+
+        const { data, error } = await query;
+        if (error) throw error;
+
+        // Group by month
+        const group: { [key: string]: number } = {};
+        data?.forEach((m) => {
+          const date = new Date(m.created_at);
+          const key = date.toLocaleString("default", { month: "short" });
+          group[key] = (group[key] || 0) + 1;
+        });
+
+        const monthOrder = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        let runningTotal = 0;
+        return monthOrder
+          .filter(m => group[m] !== undefined || runningTotal > 0)
+          .map((month) => {
+            runningTotal += group[month] || 0;
+            return { date: month, count: runningTotal };
+          });
+      } catch (error) {
+        console.error("Error fetching growth chart:", error);
+        throw error;
+      }
+    },
   });
 }
