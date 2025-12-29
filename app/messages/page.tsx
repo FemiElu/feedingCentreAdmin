@@ -53,6 +53,8 @@ export default function MessagesPage() {
     });
     const [subject, setSubject] = useState("");
     const [content, setContent] = useState("");
+    const [isScheduled, setIsScheduled] = useState(false);
+    const [scheduledDate, setScheduledDate] = useState("");
 
     const recipientGroups: { id: RecipientGroup; label: string; icon: string }[] = [
         { id: "all", label: "Broadcast", icon: "📢" },
@@ -94,6 +96,7 @@ export default function MessagesPage() {
                 channels: selectedChannels,
                 subject: channels.email ? subject : undefined,
                 content,
+                scheduled_at: isScheduled && scheduledDate ? new Date(scheduledDate).toISOString() : undefined,
             });
 
             toast({
@@ -105,6 +108,8 @@ export default function MessagesPage() {
             // Reset form
             setSubject("");
             setContent("");
+            setIsScheduled(false);
+            setScheduledDate("");
         } catch (error) {
             toast({
                 title: "Error",
@@ -344,6 +349,46 @@ export default function MessagesPage() {
                                         </div>
                                     </div>
 
+                                    {/* Scheduling Option */}
+                                    <div className="p-6 border-t border-gray-100 bg-gray-50/50">
+                                        <div className="flex items-center mb-4">
+                                            <div className="relative flex items-start">
+                                                <div className="flex h-6 items-center">
+                                                    <input
+                                                        id="schedule-message"
+                                                        name="schedule-message"
+                                                        type="checkbox"
+                                                        checked={isScheduled}
+                                                        onChange={(e) => setIsScheduled(e.target.checked)}
+                                                        className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                                    />
+                                                </div>
+                                                <div className="ml-3 text-sm leading-6">
+                                                    <label htmlFor="schedule-message" className="font-medium text-gray-900">
+                                                        Schedule for later
+                                                    </label>
+                                                    <p className="text-gray-500">Pick a specific date and time to send this message.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {isScheduled && (
+                                            <div className="ml-7 grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Select Date & Time
+                                                    </label>
+                                                    <Input
+                                                        type="datetime-local"
+                                                        value={scheduledDate}
+                                                        onChange={(e) => setScheduledDate(e.target.value)}
+                                                        className="w-full"
+                                                        min={new Date().toISOString().slice(0, 16)}
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                     <div className="p-6 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
                                         <p className="text-sm text-gray-500">
                                             Estimated reach: <span className="font-bold text-gray-900">~1,250 members</span>
@@ -355,7 +400,7 @@ export default function MessagesPage() {
                                             onClick={handleSend}
                                             loading={sendMessage.isLoading}
                                         >
-                                            Send Message Now
+                                            {isScheduled ? "Schedule Message" : "Send Message Now"}
                                         </Button>
                                     </div>
                                 </Card>

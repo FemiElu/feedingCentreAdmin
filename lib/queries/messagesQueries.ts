@@ -9,8 +9,9 @@ export interface Message {
     channels: ("email" | "whatsapp" | "sms")[];
     subject?: string;
     content: string;
-    status: "pending" | "sending" | "sent" | "failed";
+    status: "pending" | "sending" | "sent" | "failed" | "scheduled";
     created_at: string;
+    scheduled_at?: string;
 }
 
 export interface SendMessageInput {
@@ -19,6 +20,7 @@ export interface SendMessageInput {
     channels: ("email" | "whatsapp" | "sms")[];
     subject?: string;
     content: string;
+    scheduled_at?: string;
 }
 
 export function useMessages() {

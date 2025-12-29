@@ -63,6 +63,41 @@ export type Database = {
           updated_at?: string;
         };
       };
+      attendance: {
+        Row: {
+          id: string;
+          created_at: string;
+          date: string;
+          service_type: string;
+          center_id: string;
+          adult_male: number;
+          adult_female: number;
+          child_male: number;
+          child_female: number;
+        };
+        Insert: {
+          id?: string;
+          created_at?: string;
+          date: string;
+          service_type: string;
+          center_id: string;
+          adult_male?: number;
+          adult_female?: number;
+          child_male?: number;
+          child_female?: number;
+        };
+        Update: {
+          id?: string;
+          created_at?: string;
+          date?: string;
+          service_type?: string;
+          center_id?: string;
+          adult_male?: number;
+          adult_female?: number;
+          child_male?: number;
+          child_female?: number;
+        };
+      };
     };
   };
 };
